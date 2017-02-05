@@ -6,20 +6,8 @@
 
 package at.yawk.dbus.client;
 
-import at.yawk.dbus.client.annotation.Bus;
-import at.yawk.dbus.client.annotation.Call;
-import at.yawk.dbus.client.annotation.Destination;
-import at.yawk.dbus.client.annotation.ExceptionMapping;
-import at.yawk.dbus.client.annotation.GetProperty;
-import at.yawk.dbus.client.annotation.Interface;
-import at.yawk.dbus.client.annotation.Listener;
+import at.yawk.dbus.client.annotation.*;
 import at.yawk.dbus.client.annotation.Member;
-import at.yawk.dbus.client.annotation.ObjectPath;
-import at.yawk.dbus.client.annotation.SessionBus;
-import at.yawk.dbus.client.annotation.Signal;
-import at.yawk.dbus.client.annotation.SubInterface;
-import at.yawk.dbus.client.annotation.SystemBus;
-import at.yawk.dbus.client.annotation.Timeout;
 import at.yawk.dbus.client.error.PatternResponseValidator;
 import at.yawk.dbus.client.error.ResponseValidator;
 import at.yawk.dbus.client.request.Request;
