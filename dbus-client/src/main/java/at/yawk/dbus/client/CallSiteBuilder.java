@@ -31,10 +31,7 @@ import at.yawk.dbus.databind.binder.PrimitiveAnnotationBinderTransformer;
 import at.yawk.dbus.databind.binder.TypeUtil;
 import at.yawk.dbus.protocol.MatchRule;
 import at.yawk.dbus.protocol.MessageType;
-import at.yawk.dbus.protocol.object.BasicObject;
-import at.yawk.dbus.protocol.object.DbusObject;
-import at.yawk.dbus.protocol.object.ObjectPathObject;
-import at.yawk.dbus.protocol.object.StringObject;
+import at.yawk.dbus.protocol.object.*;
 import at.yawk.dbus.protocol.type.BasicType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -48,6 +45,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import lombok.Getter;
@@ -88,6 +86,7 @@ class CallSiteBuilder implements Request {
      * Unwrap the returned variant before passing to the return binder; used by property get
      */
     boolean unwrapReturnVariant;
+    boolean wrapParametersVariant;
 
     // todo: bake these if possible
     ObjectPathObject objectPathObject;
@@ -250,7 +249,12 @@ class CallSiteBuilder implements Request {
                 Annotation[] annotations = method.getParameterAnnotations()[i];
                 Binder binder = dataBinder.getBinder(parameter, Arrays.asList(annotations));
                 final int finalI = i;
-                actions.add((site, args) -> site.arguments.add(binder.encode(args[finalI])));
+                if (wrapParametersVariant) {
+                    actions.add((site, args) -> site.arguments.add(VariantObject.create(binder.encode(args[finalI]))));
+                }
+                else {
+                    actions.add((site, args) -> site.arguments.add(binder.encode(args[finalI])));
+                }
             }
 
             if (method.getReturnType() != void.class) {
@@ -290,6 +294,17 @@ class CallSiteBuilder implements Request {
                 site.arguments.add(BasicObject.createString(site.member));
                 site.interfaceName = "org.freedesktop.DBus.Properties";
                 site.member = "Get";
+            });
+        });
+        ifPresent(element, SetProperty.class, a -> {
+            this.messageType = MessageType.METHOD_CALL;
+            this.wrapParametersVariant = true;
+
+            actions.add((site, args) -> {
+                site.arguments.add(BasicObject.createString(site.interfaceName));
+                site.arguments.add(BasicObject.createString(site.member));
+                site.interfaceName = "org.freedesktop.DBus.Properties";
+                site.member = "Set";
             });
         });
         ifPresent(element, ExceptionMapping.class, this::decorateFromExceptionMapping);
