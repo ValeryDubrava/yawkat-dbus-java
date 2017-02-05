@@ -16,6 +16,7 @@ import at.yawk.dbus.protocol.DbusAddress;
 import at.yawk.dbus.protocol.DbusChannel;
 import at.yawk.dbus.protocol.DbusConnector;
 import at.yawk.dbus.protocol.MatchRule;
+import at.yawk.dbus.protocol.auth.mechanism.AuthMechanism;
 import at.yawk.dbus.protocol.object.DbusObject;
 import java.io.Closeable;
 import java.io.IOException;
@@ -63,6 +64,10 @@ public class DbusClient implements Closeable {
                 busMapLock.writeLock().unlock();
             }
         });
+    }
+
+    public void setAuthMechanism(AuthMechanism authMechanism) {
+        getConnector().setAuthMechanism(authMechanism);
     }
 
     public void connect(String busName, DbusAddress address) throws Exception {
