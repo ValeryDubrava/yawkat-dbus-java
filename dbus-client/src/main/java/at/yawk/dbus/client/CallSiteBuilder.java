@@ -34,12 +34,7 @@ import at.yawk.dbus.protocol.MessageType;
 import at.yawk.dbus.protocol.object.*;
 import at.yawk.dbus.protocol.type.BasicType;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -236,7 +231,33 @@ class CallSiteBuilder implements Request {
                     };
                 });
             } else {
-                throw new IllegalArgumentException("Unsupported listener type " + raw.getName());
+                if (raw.getMethods().length == 0 || raw.getMethods().length > 1) {
+                    throw new IllegalArgumentException("Listener type must contain one method, " + raw.getMethods().length + " found.");
+                }
+
+                final Method listenerMethod = raw.getMethods()[0];
+                Type[] paramTypes = listenerMethod.getGenericParameterTypes();
+                final Binder[] binders = new Binder[paramTypes.length];
+                for (int i = 0; i < paramTypes.length; i++) {
+                    Type paramType = paramTypes[i];
+                    binders[i] = dataBinder.getBinder(paramType);
+                }
+                actions.add((site, args) -> {
+                    final Object listener = args[listenerParameterIndex];
+                    site.listener = argVals -> {
+                        Object[] decodedArgs = new Object[binders.length];
+                        for (int i = 0; i < Math.min(argVals.size(), binders.length); i++) {
+                            DbusObject dbusObject = argVals.get(i);
+                            decodedArgs[i] = binders[i].decode(dbusObject);
+                        }
+                        try {
+                            listenerMethod.invoke(listener, decodedArgs);
+                        }
+                        catch (IllegalAccessException | InvocationTargetException e) {
+                            throw new RuntimeException("Listener invocation failed.", e);
+                        }
+                    };
+                });
             }
 
             if (method.getReturnType() != void.class) {
