@@ -46,10 +46,17 @@ public class RmiFactory {
         baseSite.addValidator(validator);
     }
 
-    @SuppressWarnings("unchecked")
     public <I> I createRmiInstance(Class<I> type) {
+        return createRmiInstance(type, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <I> I createRmiInstance(Class<I> type, String objectPath) {
         CallSiteBuilder classSite = baseSite.createChild(false);
         classSite.decorateFromClass(type);
+        if (objectPath != null) {
+            classSite.objectPath = objectPath;
+        }
         log.trace("Class call site for {} is {}", classSite, classSite);
 
         Map<Method, CallSiteBuilder> sites = new HashMap<>();

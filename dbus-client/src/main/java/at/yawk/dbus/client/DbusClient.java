@@ -86,6 +86,10 @@ public class DbusClient implements Closeable {
         return rootFactory.createRmiInstance(interfaceClass);
     }
 
+    public <I> I implement(Class<I> interfaceClass, String objectPath) {
+        return rootFactory.createRmiInstance(interfaceClass, objectPath);
+    }
+
     @Override
     public void close() throws IOException {
         busMapLock.writeLock().lock();
