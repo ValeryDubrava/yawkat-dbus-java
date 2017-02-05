@@ -74,9 +74,14 @@ class LoggingInboundAdapter extends ChannelDuplexHandler {
             bytes.clear();
             return;
         }
+        StringBuilder hexOut = new StringBuilder(bytes.remaining() * 3);
         StringBuilder out = new StringBuilder(bytes.remaining() * 3);
         while (bytes.hasRemaining()) {
             int i = bytes.get() & 0xff;
+            if (i < 0x10) { hexOut.append("0"); }
+            hexOut.append(Integer.toHexString(i));
+            hexOut.append(" ");
+
             String repr;
             if ((i >= 'a' && i <= 'z') ||
                 (i >= 'A' && i <= 'Z') ||
@@ -98,7 +103,7 @@ class LoggingInboundAdapter extends ChannelDuplexHandler {
             out.append(repr);
             for (int j = repr.length(); j < 3; j++) { out.append(' '); }
         }
-        log.trace("[{}] {}", streamName, out);
+        log.trace("[{}] {}: {}", streamName, hexOut, out);
         bytes.clear();
     }
 }
