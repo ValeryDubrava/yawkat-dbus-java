@@ -96,8 +96,13 @@ public class DictBinderFactory implements BinderFactory {
             obj.forEach((k, v) -> entries.put(keyBinder.encode(k), valueBinder.encode(v)));
             DictTypeDefinition dictType = this.dictType;
             if (dictType == null) {
-                Map.Entry<DbusObject, DbusObject> entry = entries.entrySet().iterator().next();
-                dictType = new DictTypeDefinition(entry.getKey().getType(), entry.getValue().getType());
+                if (entries.isEmpty()) {
+                    dictType = new DictTypeDefinition(keyBinder.getType(), valueBinder.getType());
+                }
+                else {
+                    Map.Entry<DbusObject, DbusObject> entry = entries.entrySet().iterator().next();
+                    dictType = new DictTypeDefinition(entry.getKey().getType(), entry.getValue().getType());
+                }
             }
             return DictObject.create(dictType, entries);
         }
