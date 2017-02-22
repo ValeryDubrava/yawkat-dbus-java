@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>at.yawk.dbus</groupId>
+    <groupId>ru.ddg.iot.dbus</groupId>
     <artifactId>dbus-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.1-SNAPSHOT</version>
@@ -33,16 +33,21 @@
             <name>Jonas Konrad</name>
             <url>http://yawk.at</url>
         </developer>
+        <developer>
+            <name>Valeriy Dubrava</name>
+            <url>http://ddgcorp.ru/en</url>
+            <email>vd@ddgcorp.ru</email>
+        </developer>
     </developers>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Pure java DBus protocol implementation</description>
-    <url>https://github.com/yawkat/dbus-java</url>
+    <description>Pure java DBus protocol implementation (forked from https://github.com/yawkat/dbus-java)</description>
+    <url>https://github.com/ValeryDubrava/yawkat-dbus-java</url>
 
     <scm>
-        <url>https://github.com/yawkat/dbus-java</url>
-        <connection>scm:git:git://github.com/yawkat/dbus-java.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yawkat/dbus-java.git</developerConnection>
+        <url>https://github.com/ValeryDubrava/yawkat-dbus-java</url>
+        <connection>scm:git:git://github.com/ValeryDubrava/yawkat-dbus-java.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/ValeryDubrava/yawkat-dbus-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
